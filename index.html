@@ -1,0 +1,501 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquasphere - Clean Water for Everyone</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Using Phosphor Icons as a lightweight alternative to Lucide for static usage -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere
+            </a>
+
+
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#citizen" class="nav-link">Citizen</a></li>
+                <li><a href="#volunteer" class="nav-link">Volunteer</a></li>
+                <li><a href="#admin" class="nav-link">Admin</a></li>
+                <li><a href="login.html" class="btn btn-primary">Login</a></li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero bg-sky"
+        style="background-image: linear-gradient(rgba(240, 249, 255, 0.7), rgba(240, 249, 255, 0.7)), url('./assets/hero-bg.jpg'); background-size: cover; background-position: center;">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 40px; height: 40px; left: 15%; animation-duration: 6s;"></div>
+            <div class="bubble-item"
+                style="width: 60px; height: 60px; left: 45%; animation-duration: 9s; animation-delay: 2s;"></div>
+        </div>
+        <div class="container animate-on-scroll"
+            style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap; position: relative; z-index: 5;">
+            <div
+                style="background-color: var(--hero-box-bg); padding: 3rem; border-radius: var(--radius-lg); backdrop-filter: blur(8px); flex: 1; min-width: 300px; box-shadow: var(--shadow-lg);">
+                <h1 class="hero-title hero-text-enhanced">Empowering Citizens for<br>Cleaner Water
+                </h1>
+                <p class="hero-subtitle hero-text-enhanced">
+                    Join the Aquasphere initiative. Report water quality issues, track improvements, and contribute
+                    to a
+                    safer environment for your community.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#citizen" class="btn btn-primary">
+                        Get Started <i class="ph ph-arrow-down"></i>
+                    </a>
+                    <a href="about.html" class="btn btn-outline">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div
+                style="flex: 1; min-width: 300px; display: flex; justify-content: center; position: relative; z-index: 5;">
+                <img src="./assets/monitoring.jpg" alt="Water Quality Monitoring" class="hover-glow"
+                    style="width: 100%; max-width: 500px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 4px solid rgba(255, 255, 255, 0.2); transition: var(--transition);">
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Stats -->
+    <section class="stats-section bg-deep" style="padding: 4rem 1.5rem;">
+        <div class="container animate-on-scroll"
+            style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; text-align: center;">
+            <div>
+                <h2 style="font-size: 3rem; font-weight: 800; color: var(--accent-color);"><span class="counter-value"
+                        data-target="5000" data-suffix="+">0</span></h2>
+                <p style="opacity: 0.9; font-size: 1.1rem;">Issues Reported</p>
+            </div>
+            <div>
+                <h2 style="font-size: 3rem; font-weight: 800; color: var(--accent-color);"><span class="counter-value"
+                        data-target="1200" data-suffix="">0</span></h2>
+                <p style="opacity: 0.9; font-size: 1.1rem;">Communities Helped</p>
+            </div>
+            <div>
+                <h2 style="font-size: 3rem; font-weight: 800; color: var(--accent-color);"><span class="counter-value"
+                        data-target="98" data-suffix="%">0</span></h2>
+                <p style="opacity: 0.9; font-size: 1.1rem;">Resolution Rate</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Citizen Section -->
+    <section id="citizen" class="bg-mist" style="padding: 6rem 1.5rem; position: relative;">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 40px; height: 40px; left: 65%; animation-duration: 10s;"></div>
+        </div>
+        <div class="container">
+            <div class="animate-on-scroll"
+                style="text-align: center; margin-bottom: 3rem; position: relative; z-index: 5;">
+                <div
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--pill-citizen-bg); color: var(--pill-citizen-text); padding: 0.5rem 1rem; border-radius: 99px; margin-bottom: 1rem; font-weight: 600; font-size: 0.875rem;">
+                    <i class="ph-fill ph-user"></i> CITIZEN ROLE
+                </div>
+                <h2 style="font-size: 2.5rem; color: var(--text-dark); margin-bottom: 1rem;">Be the Eyes of Your
+                    Community
+                </h2>
+                <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">Easily report pollution,
+                    leakages, or
+                    quality issues directly from your smartphone. Your reports drive real change.</p>
+            </div>
+
+            <div class="feature-grid animate-on-scroll" style="position: relative; z-index: 5;">
+                <div class="feature-card hover-float">
+                    <img src="./assets/monitoring.jpg" alt="Report Issue"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon" style="width: 48px; height: 48px;">
+                        <i class="ph ph-camera" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3>Snap & Report</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Instantly report contamination by uploading
+                        photos and location data directly from your phone.</p>
+                </div>
+                <div class="feature-card hover-float">
+                    <img src="./assets/water-sampling.jpg" alt="Real-time Alerts"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon"
+                        style="width: 48px; height: 48px; background-color: #d1fae5; color: #059669;">
+                        <i class="ph ph-bell" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3>Real-time Alerts</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Get notified about water quality issues in
+                        your
+                        specific neighborhood.</p>
+                </div>
+                <div class="feature-card hover-float"
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--secondary-color), var(--blue-deep)); color: white;">
+                    <h3 style="color: white; margin-bottom: 1.5rem;">Ready to help?</h3>
+                    <a href="auth-citizen.html" class="btn btn-outline"
+                        style="background: white; color: var(--primary-color);">Login as
+                        Citizen</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Section -->
+    <section id="volunteer" class="bg-ocean" style="padding: 6rem 1.5rem; position: relative;">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 50px; height: 50px; left: 40%; animation-duration: 12s;"></div>
+        </div>
+        <div class="container">
+            <div class="animate-on-scroll"
+                style="text-align: center; margin-bottom: 3rem; position: relative; z-index: 5;">
+                <div
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--pill-volunteer-bg); color: var(--pill-volunteer-text); padding: 0.5rem 1rem; border-radius: 99px; margin-bottom: 1rem; font-weight: 600; font-size: 0.875rem;">
+                    <i class="ph-fill ph-hand-heart"></i> VOLUNTEER ROLE
+                </div>
+                <h2 style="font-size: 2.5rem; color: var(--text-dark); margin-bottom: 1rem;">Take Action on the Ground
+                </h2>
+                <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">Join our network of field
+                    volunteers to verify reports, collect samples, and lead local cleanup drives.</p>
+            </div>
+
+            <div class="feature-grid animate-on-scroll" style="position: relative; z-index: 5;">
+                <div class="feature-card hover-float">
+                    <img src="./assets/volunteer-cleanup.jpg" alt="Join Cleanup"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon" style="background-color: #d1fae5; color: #059669;">
+                        <i class="ph ph-map-pin" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3>Field Verification</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Visit reported sites to validate claims and
+                        assess severity.</p>
+                </div>
+                <div class="feature-card hover-float">
+                    <img src="./assets/lab-analysis.jpg" alt="Analysis Support"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon" style="background-color: #d1fae5; color: #059669;">
+                        <i class="ph ph-flask" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3>Sample Collection</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Collect water samples for laboratory
+                        testing using provided kits.</p>
+                </div>
+                <div class="feature-card hover-float"
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--vibrant-blue), var(--blue-deep)); color: white;">
+                    <h3 style="color: var(--white); margin-bottom: 1.5rem;">Join the Force</h3>
+                    <a href="auth-volunteer.html" class="btn btn-outline"
+                        style="background: var(--white); color: #047857;">Login as
+                        Volunteer</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Section -->
+    <section id="admin" class="bg-deep" style="padding: 6rem 1.5rem; position: relative;">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 45px; height: 45px; left: 85%; animation-duration: 9s;"></div>
+        </div>
+        <div class="container">
+            <div class="animate-on-scroll"
+                style="text-align: center; margin-bottom: 3rem; position: relative; z-index: 5;">
+                <div
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--pill-admin-bg); color: var(--pill-admin-text); padding: 0.5rem 1rem; border-radius: 99px; margin-bottom: 1rem; font-weight: 600; font-size: 0.875rem;">
+                    <i class="ph-fill ph-shield-check"></i> ADMIN ROLE
+                </div>
+                <h2 style="font-size: 2.5rem; color: white; margin-bottom: 1rem;">Manage & Orchestrate</h2>
+                <p style="color: rgba(255, 255, 255, 0.8); max-width: 600px; margin: 0 auto;">Ensure efficient
+                    resolution of
+                    issues, manage resources, and oversee the entire water safety ecosystem.</p>
+            </div>
+
+            <div class="feature-grid animate-on-scroll" style="position: relative; z-index: 5;">
+                <div class="feature-card hover-float">
+                    <img src="./assets/data-analytics.jpg" alt="Live Dashboards"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon" style="background-color: #fee2e2; color: #dc2626;">
+                        <i class="ph ph-chart-bar" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 style="color: var(--text-dark);">Data Analytics</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Visualize trends and identify hotspots for
+                        proactive intervention.</p>
+                </div>
+                <div class="feature-card hover-float">
+                    <img src="./assets/community.jpg" alt="Civic Interaction"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="auth-icon" style="background-color: #fee2e2; color: #dc2626;">
+                        <i class="ph ph-users" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 style="color: var(--text-dark);">Resource Allocation</h3>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Assign volunteers and specialized teams to
+                        critical issues.</p>
+                </div>
+                <div class="feature-card hover-float"
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--blue-dark), var(--blue-professional)); color: white;">
+                    <h3 style="color: var(--white); margin-bottom: 1.5rem;">Access Portal</h3>
+                    <a href="auth-admin.html" class="btn btn-outline" style="background: #0284c7; color: white;">Login
+                        as
+                        Admin</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Reviews Section -->
+    <section class="volunteer-reviews bg-mist">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 40px; height: 40px; left: 20%; animation-duration: 10s;"></div>
+        </div>
+        <div class="container">
+            <h2
+                style="text-align: center; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-dark); position: relative; z-index: 10;">
+                Volunteer Impact & Feedback</h2>
+            <p
+                style="text-align: center; margin-bottom: 4rem; color: var(--text-light); max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 10;">
+                Hear from our dedicated volunteers who are making a difference on the front lines of water conservation.
+            </p>
+
+            <div class="feature-grid">
+                <div class="review-card-modern">
+                    <div class="star-rating">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i
+                            class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                    </div>
+                    <p style="font-style: italic; margin-bottom: 1.5rem; line-height: 1.8;">"Working as a field
+                        volunteer has been incredibly rewarding. The platform makes it so easy to find tasks and track
+                        my contribution to the local community's safety."</p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="./assets/avatar-1.jpg" alt="Volunteer" class="review-avatar">
+                        <div>
+                            <h4 style="margin: 0; color: var(--text-dark);">James Wilson</h4>
+                            <span style="font-size: 0.85rem; color: var(--secondary-color);">Field Specialist</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card-modern">
+                    <div class="star-rating">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i
+                            class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                    </div>
+                    <p style="font-style: italic; margin-bottom: 1.5rem; line-height: 1.8;">"I mainly help with water
+                        sample collection. The training modules provided were very thorough, and I feel like I'm
+                        genuinely contributing to better water health."</p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="./assets/avatar-2.jpg" alt="Volunteer" class="review-avatar">
+                        <div>
+                            <h4 style="margin: 0; color: var(--text-dark);">Elena Vance</h4>
+                            <span style="font-size: 0.85rem; color: var(--secondary-color);">Sample Technician</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card-modern">
+                    <div class="star-rating">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i
+                            class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i>
+                    </div>
+                    <p style="font-style: italic; margin-bottom: 1.5rem; line-height: 1.8;">"Excellent coordination
+                        through the Admin portal. It's great to see authorities responding so quickly to the alerts we
+                        verify in the field."</p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="./assets/avatar-3.jpg" alt="Volunteer" class="review-avatar">
+                        <div>
+                            <h4 style="margin: 0; color: var(--text-dark);">Marcus Wright</h4>
+                            <span style="font-size: 0.85rem; color: var(--secondary-color);">Senior Volunteer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="container" style="padding: 6rem 1.5rem;">
+        <div class="faq-container" style="border-color: var(--blue-ocean); background: var(--blue-sky);">
+            <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2rem; color: var(--text-dark);">Frequently
+                Asked
+                Questions</h2>
+            <div style="max-width: 800px; margin: 0 auto; display: grid; gap: 1.5rem;">
+                <div
+                    style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--secondary-color); box-shadow: var(--shadow-sm);">
+                    <h4
+                        style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-color);">
+                        Is Aquasphere free to use?
+                    </h4>
+                    <p style="color: var(--text-light);">Yes! The platform is completely free for all citizens and
+                        volunteers.</p>
+                </div>
+                <div
+                    style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--secondary-color); box-shadow: var(--shadow-sm);">
+                    <h4
+                        style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-color);">
+                        How quickly are reports
+                        addressed?</h4>
+                    <p style="color: var(--text-light);">Turnaround time varies by issue severity, but critical alerts
+                        are
+                        typically triaged within 2 hours.</p>
+                </div>
+                <div
+                    style="background: var(--white); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--secondary-color); box-shadow: var(--shadow-sm);">
+                    <h4
+                        style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-color);">
+                        Can I remain anonymous?</h4>
+                    <p style="color: var(--text-light);">Absolutely. You can choose to submit reports anonymously,
+                        though
+                        creating an account helps track progress.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section bg-sky" style="position: relative;">
+        <div class="bubbles-container">
+            <div class="bubble-item" style="width: 35px; height: 35px; left: 90%; animation-duration: 8s;"></div>
+        </div>
+        <div class="container" style="position: relative; z-index: 5;">
+            <h2 class="section-title" style="justify-content: center;">How It Works</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-icon" style="background: var(--vibrant-blue);">1</div>
+                    <div class="step-content">
+                        <h3>Report Issue</h3>
+                        <p>Snap a photo, verify location, and submit via the app instantly.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon" style="background: var(--vibrant-cyan);">2</div>
+                    <div class="step-content">
+                        <h3>Verify & Triage</h3>
+                        <p>Local volunteers check the site while our system flags severity.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon" style="background: var(--blue-professional);">3</div>
+                    <div class="step-content">
+                        <h3>Action Taken</h3>
+                        <p>Authorities dispatch teams to resolve the problem efficiently.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News/Blog Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" style="justify-content: center;">Latest Updates</h2>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <article
+                    style="background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition);">
+                    <img src="./assets/tech-support.jpg" alt="Technical Support"
+                        style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <span
+                            style="color: var(--secondary-color); font-weight: 600; font-size: 0.875rem;">Technology</span>
+                        <h3 style="margin: 0.5rem 0; font-size: 1.25rem; color: var(--text-dark);">New Sensors Deployed
+                            in North District</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 1rem;">We've installed 50
+                            new IoT water quality sensors to monitor contamination levels in real-time.</p>
+                        <a href="#" style="color: var(--secondary-color); font-weight: 600; text-decoration: none;">Read
+                            More &rarr;</a>
+                    </div>
+                </article>
+                <article
+                    style="background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition);">
+                    <img src="./assets/consultation.jpg" alt="Expert Consultation"
+                        style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <span
+                            style="color: var(--secondary-color); font-weight: 600; font-size: 0.875rem;">Education</span>
+                        <h3 style="margin: 0.5rem 0; font-size: 1.25rem; color: var(--text-dark);">Water Conservation
+                            Workshop</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 1rem;">Join our upcoming
+                            workshop to learn practical tips for reducing water usage at home.
+                            <br><img src="./assets/map-preview.jpg" alt="Mapping Support"
+                                style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-top: 0.5rem;">
+                        </p>
+                        <a href="#" style="color: var(--secondary-color); font-weight: 600; text-decoration: none;">Read
+                            More
+                            &rarr;</a>
+                    </div>
+                </article>
+                <article
+                    style="background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition);">
+                    <img src="./assets/training.jpg" alt="Training Sessions"
+                        style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <span
+                            style="color: var(--secondary-color); font-weight: 600; font-size: 0.875rem;">Policy</span>
+                        <h3 style="margin: 0.5rem 0; font-size: 1.25rem; color: var(--text-dark);">New Water
+                            Conservation Guidelines</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 1rem;">City council has
+                            approved new guidelines for industrial water usage effective next month.</p>
+                        <a href="#" style="color: var(--secondary-color); font-weight: 600; text-decoration: none;">Read
+                            More &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connect With Us Section -->
+    <section class="bg-deep" style="padding: 4rem 1.5rem;">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2rem; color: var(--white);">Connect
+                With Us</h2>
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 4rem; align-items: center;">
+                <a href="#" class="social-link" style="color: var(--white); transition: transform 0.3s;">
+                    <i class="ph-fill ph-facebook-logo" style="font-size: 4rem;"></i>
+                </a>
+                <a href="#" class="social-link" style="color: var(--white); transition: transform 0.3s;">
+                    <i class="ph-fill ph-twitter-logo" style="font-size: 4rem;"></i>
+                </a>
+                <a href="#" class="social-link" style="color: var(--white); transition: transform 0.3s;">
+                    <i class="ph-fill ph-instagram-logo" style="font-size: 4rem;"></i>
+                </a>
+                <a href="#" class="social-link" style="color: var(--white); transition: transform 0.3s;">
+                    <i class="ph-fill ph-linkedin-logo" style="font-size: 4rem;"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Aquasphere</h3>
+                <p style="color: blanchedalmond; max-width: 250px;">
+                    Bridging the gap between citizens and authorities for a safer, healthier water future.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="login.html">Report Issue</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Contact</h3>
+                <ul>
+                    <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                    <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 Aquasphere. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Connection Tester</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        #log {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Backend Connection Tester</h1>
+    <p>This tool checks if your browser can talk to the backend on port 5000.</p>
+    <button onclick="checkConnection()">Click to Test Connection</button>
+    <div id="status"></div>
+    <div id="log"></div>
+
+    <script>
+        async function checkConnection() {
+            const statusDiv = document.getElementById('status');
+            const logDiv = document.getElementById('log');
+            statusDiv.innerHTML = 'Testing...';
+            logDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('http://localhost:5000/');
+                const data = await response.json();
+
+                statusDiv.innerHTML = '<p class="success">✅ SUCCESS! Your browser CAN talk to the backend.</p>';
+                logDiv.innerHTML = 'Response from server: ' + JSON.stringify(data, null, 2);
+            } catch (err) {
+                statusDiv.innerHTML = '<p class="error">❌ FAILED! Your browser is being blocked from reaching localhost:5000.</p>';
+                logDiv.innerHTML = 'Error details: ' + err.message + '\n\nPossible reasons:\n1. The backend is NOT running (did you run npm start?)\n2. Your firewall or Antivirus is blocking port 5000.\n3. You are opening this test file as file:/// instead of http://';
+            }
+        }
+    </script>
+</body>
+
+</html>

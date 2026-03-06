@@ -1,0 +1,4 @@
+✅ Connected to SQLite database.
+📦 Database tables initialized.
+🚀 Server running on http://localhost:5000
+✅ SQLite DB connected and tables ready.

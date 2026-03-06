@@ -1,0 +1,723 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard - Aquasphere</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        /* === Citizen Dashboard Scoped Styles === */
+
+        /* Stats Grid (Top) */
+        .stats-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Community Insights Grid */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md, 12px);
+            box-shadow: var(--shadow-sm);
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-dark);
+            flex-shrink: 0;
+        }
+
+        .chart-card canvas {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        @media (max-width: 992px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Pill styling for top stats */
+        .stat-pill-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md, 12px);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .pill-icon-container {
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere
+            </a>
+
+            <button class="menu-toggle"><i class="ph ph-list"></i></button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="citizen-dashboard.html" class="nav-link active">Dashboard</a></li>
+
+                <li><a href="index.html" class="btn btn-outline">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active" data-tab="overview">
+                    <i class="ph ph-squares-four"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-link" data-tab="reports">
+                    <i class="ph ph-clipboard-text"></i> My Reports
+                </a>
+                <a href="#" class="sidebar-link" data-tab="alerts">
+                    <i class="ph ph-bell"></i> Alerts
+                </a>
+                <a href="#" class="sidebar-link" data-tab="profile">
+                    <i class="ph ph-user"></i> Profile
+                </a>
+                <a href="#" class="sidebar-link" data-tab="settings">
+                    <i class="ph ph-gear"></i> Settings
+                </a>
+                <a href="login.html" class="sidebar-link" style="margin-top: auto; font-weight: 600;">
+                    <i class="ph ph-sign-out"></i> Sign Out
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Toggle -->
+            <button class="sidebar-mobile-toggle"
+                style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1001; width: 60px; height: 60px; border-radius: 50%; background: var(--brand-gradient); color: white; border: none; box-shadow: var(--shadow-lg); font-size: 1.5rem; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="ph ph-squares-four"></i>
+            </button>
+            <!-- Overview Section -->
+            <div id="overview" class="dashboard-section active">
+                <header class="dashboard-header citizen-header"
+                    style="background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 60%, #1d4ed8 100%); border-radius: var(--radius-lg); padding: 2rem 2.5rem; margin-bottom: 2.5rem; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(37,99,235,0.25);">
+                    <div>
+                        <h1 id="welcome-message" style="font-size: 2.5rem; font-weight: 800; color: white;">Welcome!
+                        </h1>
+                        <p style="font-size: 1.1rem; font-weight: 500; color: rgba(255,255,255,0.85);">Your contribution
+                            makes our water cleaner.</p>
+                    </div>
+                    <button class="btn" data-open-modal
+                        style="background: white; color: #2563eb; font-weight: 700; padding: 0.85rem 1.75rem; border-radius: 99px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                        <i class="ph ph-plus"></i> New Report
+                    </button>
+                </header>
+
+                <!-- Statistics Grid -->
+                <div class="stats-overview-grid stagger-in is-visible">
+                    <div class="stat-pill-box hover-float glass">
+                        <div class="pill-icon-container"
+                            style="background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white;">
+                            <i class="ph ph-file-text" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <p
+                                style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">
+                                Active Reports</p>
+                            <h3 class="counter-value" data-target="12"
+                                style="font-size: 1.75rem; font-weight: 800; margin: 0; color: var(--primary-color);">0
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="stat-pill-box hover-float glass">
+                        <div class="pill-icon-container"
+                            style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                            <i class="ph ph-check-circle" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <p
+                                style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">
+                                Resolved Cases</p>
+                            <h3 class="counter-value" data-target="8"
+                                style="font-size: 1.75rem; font-weight: 800; margin: 0; color: #10b981;">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-pill-box hover-float glass">
+                        <div class="pill-icon-container"
+                            style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                            <i class="ph ph-trend-up" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <p
+                                style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">
+                                Water Health</p>
+                            <h3 class="counter-value" data-target="92" data-suffix="%"
+                                style="font-size: 1.75rem; font-weight: 800; margin: 0; color: #8b5cf6;">0%</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-pill-box hover-float glass">
+                        <div class="pill-icon-container"
+                            style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                            <i class="ph ph-trophy" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <p
+                                style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">
+                                Impact Rank</p>
+                            <h3 class="counter-value" data-target="5" data-prefix="#"
+                                style="font-size: 1.75rem; font-weight: 800; margin: 0; color: #f59e0b;">#0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="animate-on-scroll">
+                    <h2 class="section-title"><i class="ph ph-warning"></i> Active Water Alerts</h2>
+                    <div class="alert-banner alert-danger">
+                        <img src="./assets/water-sampling.jpg" alt="Alert" class="alert-img">
+                        <div class="alert-content">
+                            <div class="alert-header">
+                                <i class="ph-fill ph-warning-circle"></i>
+                                <h3>High Turbidity Alert - Riverside District</h3>
+                            </div>
+                            <p>Due to recent heavy rains, water quality is currently lower than average. Boil advisory
+                                in effect for all households in the Riverside area.</p>
+                            <a href="#" class="alert-link">View details & safety instructions</a>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Charts Section -->
+                <section style="margin-bottom: 3.5rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Community Insights</h2>
+                    <div class="insights-grid">
+                        <div class="chart-card">
+                            <h3>Reports Overview</h3>
+                            <canvas id="citizenReportsChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Status Distribution</h3>
+                            <canvas id="citizenStatusChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Water Quality Trend</h3>
+                            <canvas id="citizenQualityChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>My Contribution Radar</h3>
+                            <canvas id="citizenActivityChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports" class="dashboard-section">
+                <section style="margin-bottom: 4rem;">
+
+
+                </section>
+                <section style="margin-bottom: 4rem;">
+                    <div
+                        style="background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.05); overflow: hidden;">
+                        <div
+                            style="padding: 1.5rem; background: var(--bg-light); border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-size: 1.1rem;">My Submission History</h3>
+                            <button class="btn btn-outline" data-open-modal
+                                style="padding: 0.5rem 1rem; font-size: 0.875rem;">New Report</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                                <thead
+                                    style="background: rgba(0,0,0,0.02); text-align: left; font-size: 0.875rem; color: var(--text-light);">
+                                    <tr>
+                                        <th style="padding: 1rem 1.5rem;">Report ID</th>
+                                        <th style="padding: 1rem 1.5rem;">Location</th>
+                                        <th style="padding: 1rem 1.5rem;">Issue Type</th>
+                                        <th style="padding: 1rem 1.5rem;">Status</th>
+                                        <th style="padding: 1rem 1.5rem;">Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myReportsTableBody" style="font-size: 0.9rem;">
+                                    <tr>
+                                        <td colspan="5" style="padding:2rem;text-align:center;color:var(--text-light);">
+                                            Loading your reports...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1.5rem;">Report Locations</h2>
+                    <div class="map-container" id="reportsMap"
+                        style="border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);"></div>
+
+                    <!-- Map Legend -->
+                    <div class="map-legend"
+                        style="margin-top: 1rem; display: flex; gap: 2rem; background: var(--white); padding: 1rem; border-radius: 8px; box-shadow: var(--shadow-sm); flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Red: Critical
+                                Issue</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Yellow:
+                                Quality Warning</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #0ea5e9; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Blue: Safe /
+                                Monitoring</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+            <!-- Alerts Section -->
+            <div id="alerts" class="dashboard-section">
+                <section style="margin-bottom: 4rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;"><i class="ph ph-bell"></i> Active Water Alerts
+                    </h2>
+                    <div class="alert-banner alert-danger" style="margin-bottom: 1.5rem;">
+                        <div class="alert-content">
+                            <div class="alert-header">
+                                <i class="ph-fill ph-warning-circle"></i>
+                                <h3>🔴 Critical — High Turbidity Alert, Riverside District</h3>
+                            </div>
+                            <p>Due to recent heavy rains, water quality is currently lower than average. Boil advisory
+                                in effect for all households in the Riverside area.</p>
+                            <a href="#" class="alert-link">View details &amp; safety instructions</a>
+                        </div>
+                    </div>
+                    <div class="alert-banner"
+                        style="background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+                        <i class="ph ph-warning" style="font-size: 2rem; color: #f59e0b; flex-shrink:0;"></i>
+                        <div>
+                            <h3 style="font-weight:700; margin-bottom:0.5rem;">🟡 Warning — Low Pressure, Northern
+                                Zone
+                            </h3>
+                            <p style="color: var(--text-light);">Water pressure has dropped below recommended levels in
+                                the Northern sector. Maintenance crew has been dispatched.</p>
+                        </div>
+                    </div>
+                    <div class="alert-banner"
+                        style="background: #eff6ff; border-left: 4px solid #0ea5e9; border-radius: var(--radius-md); padding: 1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+                        <i class="ph ph-info" style="font-size: 2rem; color: #0ea5e9; flex-shrink:0;"></i>
+                        <div>
+                            <h3 style="font-weight:700; margin-bottom:0.5rem;">🔵 Info — Routine Quality Check,
+                                Central
+                                District</h3>
+                            <p style="color: var(--text-light);">Scheduled monitoring is underway in the Central
+                                District. Water quality is currently within safe parameters.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profile" class="dashboard-section">
+                <section style="margin-bottom: 4rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">My Profile</h2>
+                    <div
+                        style="background: var(--white); padding: 3rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 2rem; align-items: center; margin-bottom: 2rem;">
+                            <div class="profile-pic-container" id="profile-pic-trigger"
+                                style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg,#0ea5e9,#2563eb); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; flex-shrink:0;">
+                                <i class="ph ph-user"></i>
+                            </div>
+                            <input type="file" id="profile-upload" style="display: none;" accept="image/*">
+                            <div>
+                                <h3 id="display-user-name" style="font-size: 1.75rem; font-weight: 800;">—</h3>
+                                <p id="display-user-role" style="color: var(--text-light);">Active Reporter • Citizen
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem;">
+                            <div>
+                                <h4
+                                    style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-light); text-transform: uppercase;">
+                                    Email Address</h4>
+                                <p id="display-user-email" style="font-weight: 600;">—</p>
+                            </div>
+                            <div>
+                                <h4
+                                    style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-light); text-transform: uppercase;">
+                                    Location</h4>
+                                <p id="display-user-location" style="font-weight: 600;">—</p>
+                            </div>
+                            <div>
+                                <h4
+                                    style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-light); text-transform: uppercase;">
+                                    Member Since</h4>
+                                <p id="display-user-joined" style="font-weight: 600;">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings" class="dashboard-section">
+                <section style="margin-bottom: 4rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Preference Center</h2>
+                    <div
+                        style="background: var(--white); padding: 3rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4 style="margin-bottom: 0.25rem;">Real-time Alerts</h4>
+                                    <p style="font-size: 0.875rem; color: var(--text-light);">Get instant updates on
+                                        water quality in your district.</p>
+                                </div>
+                                <div class="setting-toggle" data-setting="realtime-alerts"
+                                    style="width: 44px; height: 24px; background: var(--primary-color); border-radius: 12px; position: relative; cursor: pointer;">
+                                    <div class="toggle-dot"
+                                        style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; right: 3px; top: 3px; transition: all 0.3s;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem;">
+                                <div>
+                                    <h4 style="margin-bottom: 0.25rem;">Dark Mode Rendering</h4>
+                                    <p style="font-size: 0.875rem; color: var(--text-light);">Force high-contrast maps
+                                        in low light conditions.</p>
+                                </div>
+                                <div class="setting-toggle" data-setting="dark-mode-maps"
+                                    style="width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; position: relative; cursor: pointer;">
+                                    <div class="toggle-dot"
+                                        style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; left: 3px; top: 3px; transition: all 0.3s;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="save-settings-btn"
+                            style="margin-top: 2.5rem; width: 100%;">Save Changes</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Social Links Section -->
+            <section style="padding: 3rem 1.5rem; background: var(--bg-light); border-top: 1px solid rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 3rem; align-items: center;">
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-facebook-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-twitter-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-instagram-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-linkedin-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Standardized Footer -->
+            <footer class="footer" style="margin-top: auto;">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Aquasphere</h3>
+                        <p style="color: blanchedalmond; max-width: 250px;">
+                            Bridging the gap between citizens and authorities for a safer, healthier water future.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Quick Links</h3>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="login.html" class="nav-link">Report Issue</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Contact</h3>
+                        <ul>
+                            <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                            <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    &copy; 2026 Aquasphere. All rights reserved.
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- New Report Modal -->
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Submit New Report</h2>
+                <button data-close-modal
+                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <form id="newReportForm">
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-input" placeholder="e.g. 5th Avenue, North District"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Issue Type</label>
+                    <select name="issue" class="form-input" required>
+                        <option value="">Select an issue</option>
+                        <option value="leakage">Water Leakage</option>
+                        <option value="pollution">Water Pollution</option>
+                        <option value="pressure">Low Water Pressure</option>
+                        <option value="odor">Strange Odor/Taste</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-input" rows="4"
+                        placeholder="Describe the issue in detail..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Attach Photo (Optional)</label>
+                    <input type="file" name="photo" class="form-input" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">
+                    Submit Report
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dashboard-charts.js"></script>
+    <script>
+        // =============================================
+        // 1. SIDEBAR TAB SWITCHING
+        // =============================================
+        const sidebarLinks = document.querySelectorAll('.sidebar-link[data-tab]');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+
+        function activateTab(tabId) {
+            dashboardSections.forEach(sec => sec.classList.remove('active'));
+            sidebarLinks.forEach(lnk => lnk.classList.remove('active'));
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+            const activeLink = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            // Init map when reports tab opens
+            if (tabId === 'reports' && !window._tnMapInited) initTamilNaduMap();
+        }
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                activateTab(this.dataset.tab);
+            });
+        });
+
+        // =============================================
+        // 2. POPULATE PROFILE FROM localStorage
+        // =============================================
+        function loadUserProfile() {
+            const uid = localStorage.getItem('currentUserId');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            let user = null;
+            if (uid) user = users.find(u => u.id === uid || u._id === uid);
+            // Fallback: find by role
+            if (!user) user = users.find(u => u.role === 'citizen');
+
+            if (user) {
+                const name = user.name || user.fullName || 'Citizen User';
+                const email = user.email || '—';
+                const loc = user.location || user.city || 'Tamil Nadu';
+                const joined = user.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' })
+                    : 'Recently';
+
+                // Welcome message
+                const welcomeEl = document.getElementById('welcome-message');
+                if (welcomeEl) welcomeEl.textContent = `Welcome, ${name.split(' ')[0]}!`;
+
+                // Profile section
+                const nameEl = document.getElementById('display-user-name');
+                const emailEl = document.getElementById('display-user-email');
+                const locEl = document.getElementById('display-user-location');
+                const joinedEl = document.getElementById('display-user-joined');
+                if (nameEl) nameEl.textContent = name;
+                if (emailEl) emailEl.textContent = email;
+                if (locEl) locEl.textContent = loc;
+                if (joinedEl) joinedEl.textContent = joined;
+            }
+        }
+        loadUserProfile();
+
+        // =============================================
+        // 3. TAMIL NADU DISTRICT MAP
+        // =============================================
+        const tnDistricts = [
+            { name: 'Chennai', lat: 13.0827, lng: 80.2707, color: '#ef4444', level: 'Critical' },
+            { name: 'Coimbatore', lat: 11.0168, lng: 76.9558, color: '#f59e0b', level: 'Warning' },
+            { name: 'Madurai', lat: 9.9252, lng: 78.1198, color: '#0ea5e9', level: 'Safe' },
+            { name: 'Tiruchirappalli', lat: 10.7905, lng: 78.7047, color: '#ef4444', level: 'Critical' },
+            { name: 'Salem', lat: 11.6643, lng: 78.1460, color: '#f59e0b', level: 'Warning' },
+            { name: 'Tirunelveli', lat: 8.7139, lng: 77.7567, color: '#0ea5e9', level: 'Safe' },
+            { name: 'Vellore', lat: 12.9165, lng: 79.1325, color: '#0ea5e9', level: 'Safe' },
+            { name: 'Erode', lat: 11.3410, lng: 77.7172, color: '#f59e0b', level: 'Warning' },
+            { name: 'Thanjavur', lat: 10.7870, lng: 79.1378, color: '#0ea5e9', level: 'Safe' },
+            { name: 'Kanyakumari', lat: 8.0883, lng: 77.5385, color: '#0ea5e9', level: 'Safe' },
+        ];
+
+        function initTamilNaduMap() {
+            window._tnMapInited = true;
+            const map = L.map('reportsMap').setView([10.7905, 78.7], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            tnDistricts.forEach(d => {
+                const dot = L.divIcon({
+                    className: '',
+                    html: `<div style="width:16px;height:16px;border-radius:50%;background:${d.color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+                L.marker([d.lat, d.lng], { icon: dot })
+                    .addTo(map)
+                    .bindPopup(`<strong>${d.name}</strong><br>Status: ${d.level}`);
+            });
+        }
+
+        // =============================================
+        // 4. REPORTS TABLE (from localStorage)
+        // =============================================
+        const statusColors = {
+            pending: { bg: '#fef9c3', color: '#854d0e' },
+            investigating: { bg: '#fff7ed', color: '#9a3412' },
+            resolved: { bg: '#d1fae5', color: '#065f46' },
+        };
+
+        async function loadMyReports() {
+            const tbody = document.getElementById('myReportsTableBody');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--text-light);">Please log in to see your reports.</td></tr>`;
+                return;
+            }
+            try {
+                const res = await fetch('/api/reports/my', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to fetch');
+                const myReports = await res.json();
+
+                if (!Array.isArray(myReports) || !myReports.length) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--text-light);">No reports yet. Click "New Report" to submit one!</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = myReports.map(r => {
+                    const s = statusColors[r.status] || statusColors.pending;
+                    const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown';
+                    const id = '#CW-' + (r._id || r.id || '000000').toString().slice(-6).toUpperCase();
+                    const issue = (r.issue || '').charAt(0).toUpperCase() + (r.issue || '').slice(1);
+                    const status = (r.status || 'pending').charAt(0).toUpperCase() + (r.status || 'pending').slice(1);
+                    return `
+                    <tr style="border-bottom:1px solid rgba(0,0,0,0.05);">
+                        <td style="padding:1.25rem;font-weight:600;">${id}</td>
+                        <td style="padding:1.25rem;">${r.location || '—'}</td>
+                        <td style="padding:1.25rem;">${issue}</td>
+                        <td style="padding:1.25rem;"><span style="background:${s.bg};color:${s.color};padding:0.35rem 0.85rem;border-radius:99px;font-size:0.875rem;font-weight:600;">${status}</span></td>
+                        <td style="padding:1.25rem;color:var(--text-light);">${date}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding:2rem;text-align:center;color:#ef4444;">Could not load reports.</td></tr>`;
+            }
+        }
+        loadMyReports();
+        document.querySelectorAll('.sidebar-link[data-tab="reports"]').forEach(l => l.addEventListener('click', loadMyReports));
+
+        // ── Mobile Sidebar Toggle ────────────────────────────────
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.sidebar-mobile-toggle');
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-active');
+            });
+
+            // Show toggle on mobile screen size
+            const checkMobile = () => {
+                if (window.innerWidth <= 992) {
+                    mobileToggle.style.display = 'flex';
+                } else {
+                    mobileToggle.style.display = 'none';
+                    sidebar.classList.remove('mobile-active');
+                }
+            };
+
+            window.addEventListener('resize', checkMobile);
+            checkMobile();
+        }
+
+        // Reload after modal closes
+        const modalOverlay = document.querySelector('.modal-overlay');
+        if (modalOverlay) {
+            const observer = new MutationObserver(() => { if (modalOverlay.style.display === 'none') loadMyReports(); });
+            observer.observe(modalOverlay, { attributes: true, attributeFilter: ['style'] });
+        }
+    </script>
+</body>
+
+</html>

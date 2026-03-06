@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Aquasphere</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere
+            </a>
+
+            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                <i class="ph ph-list"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link active">About</a></li>
+
+                <li><a href="login.html" class="btn btn-primary">Login</a></li>
+                <li>
+                    <button class="theme-toggle" aria-label="Toggle Theme">
+                        <i class="ph-fill ph-moon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- About Header -->
+    <header class="about-header">
+        <div class="container">
+            <h1 class="hero-title" style="font-size: 3rem;">Our Mission</h1>
+            <p class="hero-subtitle">
+                To create a transparent, accountable, and collaborative ecosystem for water quality management.
+            </p>
+        </div>
+    </header>
+
+    <!-- About Content -->
+    <section class="about-content">
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">What is Aquasphere?</h2>
+                <p style="margin-bottom: 2rem; color: var(--text-light); font-size: 1.1rem;">
+                    Aquasphere is a citizen-centric platform designed to enhance public health and environmental
+                    safety.
+                    We provide the tools for communities to report water quality issues, track government response, and
+                    access vital safety information in real-time.
+                </p>
+
+                <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark); margin-top: 3rem;">How It
+                    Works</h2>
+
+                <div class="feature-grid" style="margin-top: 1rem;">
+                    <div class="feature-card">
+                        <div class="auth-icon">
+                            <i class="ph ph-eye" style="font-size: 2rem;"></i>
+                        </div>
+                        <h3>1. Observe</h3>
+                        <p style="color: var(--text-light);">Citizens notice issues like unusual color, smell, or taste
+                            in their water supply.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="auth-icon pill-volunteer">
+                            <i class="ph ph-upload" style="font-size: 2rem;"></i>
+                        </div>
+                        <h3>2. Report</h3>
+                        <p style="color: var(--text-light);">Upload details and photos securely through our platform. We
+                            automatically geotag the location.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="auth-icon pill-citizen">
+                            <i class="ph ph-check-circle" style="font-size: 2rem;"></i>
+                        </div>
+                        <h3>3. Resolve</h3>
+
+                        <p style="color: var(--text-light);">Authorities triage the issue and deploy teams. You get
+                            notified when it's fixed.</p>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark); margin-top: 4rem;">Our Story
+                </h2>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    Founded in 2023, Aquasphere emerged from a simple idea: that every citizen should have the power
+                    to protect their local water sources. What started as a small community project has grown into a
+                    nationwide platform connecting thousands of citizens with water management authorities.
+                </p>
+                <p style="color: var(--text-light);">
+                    We believe that data transparency is key to accountability. By making water quality data accessible
+                    to everyone, we empower communities to demand better standards and cleaner water.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>Aquasphere</h3>
+                <p style="color: #94a3b8; max-width: 250px;">
+                    Bridging the gap between citizens and authorities for a safer, healthier water future.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="login.html">Report Issue</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                    <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2024 Aquasphere. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,718 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Aquasphere</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        /* === Admin Dashboard Scoped Styles === */
+
+        /* Analytics Grid (2 columns for balance) */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md, 12px);
+            box-shadow: var(--shadow-sm);
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-dark);
+            flex-shrink: 0;
+        }
+
+        .chart-card canvas {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Stats Grid Fixes */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .admin-stat-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid #e2e8f0;
+        }
+
+        @media (max-width: 992px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere <span class="pill pill-citizen">ADMIN</span>
+            </a>
+
+            <button class="menu-toggle"><i class="ph ph-list"></i></button>
+            <ul class="nav-links">
+                <li><a href="admin-dashboard.html" class="nav-link active">Overview</a></li>
+
+                <li><a href="#" class="nav-link">Users</a></li>
+                <li><a href="#" class="nav-link">Settings</a></li>
+                <li><a href="index.html" class="btn btn-outline">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active" data-tab="overview">
+                    <i class="ph ph-squares-four"></i> Overview
+                </a>
+                <a href="#" class="sidebar-link" data-tab="users">
+                    <i class="ph ph-users"></i> Users
+                </a>
+                <a href="#" class="sidebar-link" data-tab="analytics">
+                    <i class="ph ph-chart-line-up"></i> Analytics
+                </a>
+                <a href="#" class="sidebar-link" data-tab="reports">
+                    <i class="ph ph-file-text"></i> Reports
+                </a>
+
+                <a href="login.html" class="sidebar-link" style="margin-top: auto; font-weight: 600;">
+                    <i class="ph ph-sign-out"></i> Sign Out
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Toggle -->
+            <button class="sidebar-mobile-toggle"
+                style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1001; width: 60px; height: 60px; border-radius: 50%; background: var(--brand-gradient); color: white; border: none; box-shadow: var(--shadow-lg); font-size: 1.5rem; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="ph ph-squares-four"></i>
+            </button>
+            <!-- Overview Section -->
+            <div id="overview" class="dashboard-section active">
+                <header class="dashboard-header admin-header"
+                    style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 60%, #7f1d1d 100%); border-radius: var(--radius-lg); padding: 2rem 2.5rem; margin-bottom: 2.5rem; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(220,38,38,0.25);">
+                    <div>
+                        <h1 id="welcome-message" style="font-size: 2.5rem; font-weight: 800; color: white;">System
+                            Overview</h1>
+                        <p style="font-size: 1.1rem; font-weight: 500; color: rgba(255,255,255,0.85);">Monitoring water
+                            quality across all districts.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div class="profile-pic-container" id="profile-pic-trigger"
+                            style="width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid rgba(255,255,255,0.6);">
+                            <i class="ph ph-user" style="font-size: 1.5rem; color: white;"></i>
+                        </div>
+                        <input type="file" id="profile-upload" style="display: none;" accept="image/*">
+                        <div>
+                            <h4 id="display-user-name"
+                                style="font-weight: 700; font-size: 1.1rem; margin: 0; color: white;">Admin
+                                User</h4>
+                            <p id="display-user-email"
+                                style="font-size: 0.8rem; color: rgba(255,255,255,0.75); margin: 0;">
+                                admin@example.com</p>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Quick Alerts Feed -->
+                <div class="alert-banner alert-danger">
+                    <i class="ph ph-warning-circle"></i>
+                    <p id="admin-alert-text">3 critical contamination reports in District 4 need immediate verification.
+                    </p>
+                    <button class="btn btn-primary" data-tab-switch="reports">View Reports</button>
+                </div>
+
+
+                <div class="stats-grid stagger-in is-visible">
+                    <div class="stats-card glass hover-float" style="border-left: 6px solid #2563eb;">
+                        <p class="stats-label"
+                            style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);">
+                            Total ecosystem Reports</p>
+                        <h2 id="admin-stat-total" class="counter-value" data-target="1248"
+                            style="font-size: 3rem; font-weight: 800; color: var(--primary-color);">0</h2>
+                        <p class="stats-trend trend-up" style="font-weight: 600;"><i class="ph ph-arrow-up"></i> +12%
+                            growth</p>
+                    </div>
+                    <div class="stats-card glass hover-float" style="border-left: 6px solid #f59e0b;">
+                        <p class="stats-label"
+                            style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);">
+                            Active Investigations</p>
+                        <h2 id="admin-stat-active" class="counter-value" data-target="45"
+                            style="font-size: 3rem; font-weight: 800; color: #d97706;">0</h2>
+                        <p id="admin-critical-badge" class="stats-muted" style="color: #f43f5e; font-weight: 700;">8
+                            CRITICAL ISSUES</p>
+                    </div>
+                    <div class="stats-card glass hover-float" style="border-left: 6px solid #10b981;">
+                        <p class="stats-label"
+                            style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);">
+                            System efficiency</p>
+                        <h2 id="admin-stat-efficiency" class="counter-value" data-target="94" data-suffix="%"
+                            style="font-size: 3rem; font-weight: 800; color: #059669;">0%</h2>
+                        <p class="stats-trend trend-up" style="color: #10b981; font-weight: 600;">Optimized +5%</p>
+                    </div>
+                </div>
+
+
+                <!-- Charts Section -->
+                <section style="margin-bottom: 3.5rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Analytics Overview</h2>
+                    <div class="analytics-grid">
+                        <div class="chart-card">
+                            <h3>Reports vs Resolved</h3>
+                            <canvas id="adminReportsChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Issue Types</h3>
+                            <canvas id="adminIssuesChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Budget Allocation</h3>
+                            <canvas id="adminBudgetChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Response Time Heatmap</h3>
+                            <canvas id="adminResponseChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users" class="dashboard-section">
+                <section style="margin-bottom: 4rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">User Management</h2>
+                    <div class="chart-grid" style="margin-bottom: 3rem;">
+                        <div class="chart-card">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Community Growth</h3>
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div
+                        style="background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.05); overflow: hidden;">
+                        <div
+                            style="padding: 1.5rem; background: var(--bg-light); border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <h3 style="font-size: 1.1rem;">Registered Members</h3>
+                                <div style="position: relative;">
+                                    <i class="ph ph-magnifying-glass"
+                                        style="position: absolute; left: 10px; top: 10px; color: var(--text-light);"></i>
+                                    <input type="text" placeholder="Search..."
+                                        style="padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); font-size: 0.875rem; background: var(--white); color: var(--text-dark);">
+                                </div>
+                            </div>
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Add
+                                User</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                                <thead
+                                    style="background: rgba(0,0,0,0.02); text-align: left; font-size: 0.875rem; color: var(--text-light);">
+                                    <tr>
+                                        <th style="padding: 1rem 1.5rem;">User</th>
+                                        <th style="padding: 1rem 1.5rem;">Role</th>
+                                        <th style="padding: 1rem 1.5rem;">Status</th>
+                                        <th style="padding: 1rem 1.5rem;">Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminUsersTableBody" style="font-size: 0.9rem;">
+                                    <tr>
+                                        <td colspan="4" style="padding:2rem;text-align:center;color:var(--text-light);">
+                                            Loading users...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics" class="dashboard-section">
+                <section style="margin-bottom: 3.5rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Key Performance Indicators</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="chart-card" style="padding: 1.5rem; border-top: 4px solid var(--primary-color);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <p style="color: var(--text-light); font-size: 0.875rem; font-weight: 600;">Water
+                                        Loss Rate</p>
+                                    <h3 class="counter-value" data-target="14" data-suffix="%"
+                                        style="font-size: 2rem; font-weight: 800; margin-top: 0.25rem;">0%</h3>
+                                </div>
+                                <div style="background: rgba(14, 165, 233, 0.1); padding: 0.5rem; border-radius: 8px;">
+                                    <i class="ph ph-drop-half-bottom"
+                                        style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; color: #059669; font-weight: 600;">
+                                <i class="ph ph-arrow-down"></i> 2.1% from last month
+                            </div>
+                        </div>
+                        <div class="chart-card" style="padding: 1.5rem; border-top: 4px solid #10b981;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <p style="color: var(--text-light); font-size: 0.875rem; font-weight: 600;">Avg.
+                                        Response Time</p>
+                                    <h3 class="counter-value" data-target="4" data-suffix="h"
+                                        style="font-size: 2rem; font-weight: 800; margin-top: 0.25rem;">0h</h3>
+                                </div>
+                                <div style="background: rgba(16, 185, 129, 0.1); padding: 0.5rem; border-radius: 8px;">
+                                    <i class="ph ph-timer" style="color: #10b981; font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; color: #059669; font-weight: 600;">
+                                <i class="ph ph-arrow-down"></i> 15% improvement
+                            </div>
+                        </div>
+                        <div class="chart-card" style="padding: 1.5rem; border-top: 4px solid #f59e0b;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <p style="color: var(--text-light); font-size: 0.875rem; font-weight: 600;">Citizen
+                                        Satisfaction</p>
+                                    <h3 class="counter-value" data-target="4" data-suffix=".8/5"
+                                        style="font-size: 2rem; font-weight: 800; margin-top: 0.25rem;">0/5</h3>
+                                </div>
+                                <div style="background: rgba(245, 158, 11, 0.1); padding: 0.5rem; border-radius: 8px;">
+                                    <i class="ph ph-smiley" style="color: #f59e0b; font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; color: #059669; font-weight: 600;">
+                                <i class="ph ph-arrow-up"></i> +0.3 pts
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Regional Monitoring Map</h2>
+                    <div class="map-container" id="adminMap"></div>
+
+                    <!-- Map Legend -->
+                    <div class="map-legend"
+                        style="margin-top: 1rem; display: flex; gap: 2rem; background: var(--white); padding: 1rem; border-radius: 8px; box-shadow: var(--shadow-sm); flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Red: Critical
+                                Issue</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Yellow:
+                                Quality Warning</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div
+                                style="width: 12px; height: 12px; border-radius: 50%; background: #0ea5e9; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Blue: Safe /
+                                Monitoring</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports" class="dashboard-section">
+                <section style="margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Recent Triage Queue</h2>
+                    <div
+                        style="background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow-x: auto; border: 1px solid rgba(0,0,0,0.05);">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 700px;">
+                            <thead style="background-color: var(--bg-light); text-align: left;">
+                                <tr>
+                                    <th style="padding: 1.25rem;">Report Details</th>
+                                    <th style="padding: 1.25rem;">Reporter</th>
+                                    <th style="padding: 1.25rem;">Severity</th>
+                                    <th style="padding: 1.25rem;">Status</th>
+                                    <th style="padding: 1.25rem;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminReportsTableBody">
+                                <tr>
+                                    <td colspan="5" style="padding:2rem;text-align:center;color:var(--text-light);">
+                                        Loading reports...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+
+
+            <!-- Social Links Section -->
+            <section style="padding: 3rem 1.5rem; background: var(--bg-light); border-top: 1px solid rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 3rem; align-items: center;">
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-facebook-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-twitter-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-instagram-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color); transition: transform 0.3s;">
+                        <i class="ph-fill ph-linkedin-logo" style="font-size: 2.5rem;"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Standardized Footer -->
+            <footer class="footer" style="margin-top: auto;">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Aquasphere</h3>
+                        <p style="color: blanchedalmond; max-width: 250px;">
+                            Bridging the gap between citizens and authorities for a safer, healthier water future.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Quick Links</h3>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="login.html" class="nav-link">Report Issue</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Contact</h3>
+                        <ul>
+                            <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                            <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    &copy; 2026 Aquasphere. All rights reserved.
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dashboard-charts.js"></script>
+    <script>
+        // Role pill colours
+        const rolePill = {
+            citizen: 'background:#dbeafe;color:#1e40af;',
+            volunteer: 'background:#d1fae5;color:#065f46;',
+            admin: 'background:#fee2e2;color:#991b1b;',
+        };
+        const statusColors = {
+            pending: 'background:#fef9c3;color:#854d0e;',
+            approved: 'background:#dbeafe;color:#1e40af;',
+            investigating: 'background:#fff7ed;color:#9a3412;',
+            resolved: 'background:#d1fae5;color:#065f46;',
+            declined: 'background:#fee2e2;color:#991b1b;',
+        };
+
+        // Helper to get data
+        const getLocal = (key) => JSON.parse(localStorage.getItem(key) || '[]');
+        const setLocal = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+        // â”€â”€ Load Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function loadAdminUsers() {
+            const tbody = document.getElementById('adminUsersTableBody');
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error("No token");
+                const res = await fetch('/api/users/all', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+
+                if (!Array.isArray(users) || !users.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem;text-align:center;color:var(--text-light);">No users found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = users.map(u => {
+                    const initials = (u.name || "?").split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                    const colors = ['#0ea5e9', '#a855f7', '#f59e0b', '#10b981', '#ef4444'];
+                    const bg = colors[(u.name || "?").charCodeAt(0) % colors.length];
+                    const date = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown';
+                    const pill = rolePill[u.role] || rolePill.citizen;
+                    return `<tr style="border-bottom:1px solid rgba(0,0,0,0.05);">
+              <td style="padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:32px;height:32px;border-radius:50%;background:${bg};color:white;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">${initials}</div>
+                <div><div style="font-weight:600;">${u.name}</div><div style="font-size:0.75rem;color:var(--text-light);">${u.email}</div></div>
+              </td>
+              <td style="padding:1rem 1.5rem;"><span style="${pill}padding:0.2rem 0.6rem;border-radius:4px;font-weight:700;font-size:0.75rem;">${(u.role || '').toUpperCase()}</span></td>
+              <td style="padding:1rem 1.5rem;"><span style="color:#10b981;font-weight:600;">Active</span></td>
+              <td style="padding:1rem 1.5rem;">${date}</td>
+            </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem;text-align:center;color:#ef4444;">Failed to load users.</td></tr>';
+            }
+        }
+
+        // â”€â”€ Load Reports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function loadAdminReports() {
+            const tbody = document.getElementById('adminReportsTableBody');
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/reports/all', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const reports = await res.json();
+
+                const totalReports = reports.length || 0;
+                let activeReports = 0;
+                let criticalReports = 0;
+                if (Array.isArray(reports)) {
+                    reports.forEach(r => {
+                        if (r.status !== 'resolved' && r.status !== 'declined') {
+                            activeReports++;
+                            const issue = (r.issue || '').toLowerCase();
+                            if (issue.includes('leak') || issue.includes('critical') || issue.includes('burst') || issue.includes('high pressure') || issue.includes('severe')) {
+                                criticalReports++;
+                            }
+                        }
+                    });
+                }
+
+                // Update Overview Stats directly
+                const totalEl = document.getElementById('admin-stat-total');
+                const activeEl = document.getElementById('admin-stat-active');
+                const criticalEl = document.getElementById('admin-critical-badge');
+                const alertEl = document.getElementById('admin-alert-text');
+
+                if (totalEl) {
+                    totalEl.innerText = totalReports;
+                    totalEl.removeAttribute('data-target');
+                }
+                if (activeEl) {
+                    activeEl.innerText = activeReports;
+                    activeEl.removeAttribute('data-target');
+                }
+
+                if (criticalEl) criticalEl.innerText = `${criticalReports} CRITICAL ISSUE${criticalReports !== 1 ? 'S' : ''}`;
+                if (alertEl) alertEl.innerText = `${criticalReports} critical contamination report${criticalReports !== 1 ? 's' : ''} need immediate verification.`;
+
+                // Fetch volunteers for assignment dropdown
+                let volunteers = [];
+                try {
+                    const vRes = await fetch('/api/users/all', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const allUsers = await vRes.json();
+                    if (Array.isArray(allUsers)) {
+                        volunteers = allUsers.filter(u => u.role === 'volunteer');
+                    }
+                } catch (err) {
+                    console.error('Error fetching volunteers', err);
+                }
+
+                if (!Array.isArray(reports) || !reports.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--text-light);">No reports submitted yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = reports.map(r => {
+                    const sc = statusColors[r.status] || statusColors.pending;
+                    const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown';
+                    const issueStr = r.issue || 'undefined';
+                    const issue = issueStr.charAt(0).toUpperCase() + issueStr.slice(1);
+                    const statusStr = r.status || 'pending';
+                    const status = statusStr.charAt(0).toUpperCase() + statusStr.slice(1);
+                    const rId = r._id || r.id; // Support both Mongo and SQLite IDs
+
+                    let assignDropdown = `<select id="assign-${rId}" style="padding: 0.3rem; border-radius: 4px; border: 1px solid #ccc; font-size: 0.8rem; margin-right: 4px;">`;
+                    assignDropdown += `<option value="">Select Volunteer</option>`;
+                    volunteers.forEach(v => {
+                        const selected = r.assignedTo == v.id ? 'selected' : '';
+                        assignDropdown += `<option value="${v.id}" ${selected}>${v.name}</option>`;
+                    });
+                    assignDropdown += `</select>`;
+
+                    const declinedNotice = r.status === 'declined' ? `<br><span style="color:#ef4444; font-size:0.75rem; font-weight:600; display:inline-block; margin-top:4px;">⚠️ Volunteer Declined! Needs Re-assignment.</span>` : '';
+
+                    let actionBlock = `
+                        <div style="display:flex; gap:4px; margin-bottom:8px;">
+                            ${assignDropdown}
+                            <button onclick="assignReport('${rId}', document.getElementById('assign-${rId}').value, this)" class="btn btn-primary" style="padding:0.3rem 0.6rem;font-size:0.75rem;">Assign</button>
+                        </div>
+                    `;
+
+                    let completionBlock = '';
+                    if (r.status === 'resolved') {
+                        // If it's resolved, admins shouldn't re-assign it. 
+                        actionBlock = `<span style="color:#10b981; font-weight:600; font-size:0.875rem;">✔ Completed by Volunteer</span>`;
+
+                        // Show completion notes
+                        completionBlock = `
+                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f8fafc; border-left: 3px solid #10b981; border-radius: 4px;">
+                                <strong style="font-size:0.75rem; color:#64748b; text-transform:uppercase;">Completion Report</strong>
+                                <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #334155;">
+                                    ${r.completionNotes || 'No notes provided.'}
+                                </p>
+                                ${r.completionBudget ? `<p style="margin: 0.25rem 0 0 0; font-size: 0.75rem; font-weight: 600; color: #0f172a;">Budget: <span style="font-weight: 400;">${r.completionBudget}</span></p>` : ''}
+                            </div>
+                        `;
+                    }
+
+                    return `<tr style="border-bottom:1px solid rgba(0,0,0,0.05);">
+              <td style="padding:1.25rem;">
+                <strong>${issue}</strong><br>
+                <span style="font-size:0.875rem;color:var(--text-light);">${r.location || 'Unknown'}</span>
+                ${completionBlock}
+              </td>
+              <td style="padding:1.25rem;">${r.citizenName || '—'}</td>
+              <td style="padding:1.25rem;color:var(--text-light);font-size:0.875rem;">${date}</td>
+              <td style="padding:1.25rem;"><span style="${sc}padding:0.25rem 0.75rem;border-radius:4px;font-weight:700;font-size:0.75rem;">${status}</span><br><span style="font-size:0.75rem;color:#64748b;margin-top:4px;display:block;">Assigned: ${r.assignedTo ? volunteers.find(v => v.id == r.assignedTo)?.name || r.assignedTo : 'None'}</span>${declinedNotice}</td>
+              <td style="padding:1.25rem;">
+                ${actionBlock}
+              </td>
+            </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:#ef4444;">Failed to load reports.</td></tr>';
+            }
+        }
+
+        // â”€â”€ Update Report Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function updateStatus(id, status, btn) {
+            btn.disabled = true;
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`/api/reports/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                loadAdminReports();
+            } catch (e) { btn.disabled = false; }
+        }
+
+        // â”€â”€ Assign Report to Volunteer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        async function assignReport(id, assignedTo, btn) {
+            if (!assignedTo) {
+                alert('Please select a volunteer to assign the report to.');
+                return;
+            }
+            btn.disabled = true;
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`/api/reports/${id}/assign`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ assignedTo })
+                });
+                alert('Report assigned successfully!');
+                loadAdminReports();
+            } catch (e) {
+                console.error(e);
+                alert('Failed to assign report.');
+                btn.disabled = false;
+            }
+        }
+
+        // â”€â”€ Sidebar Tab Switching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const adminLinks = document.querySelectorAll('.sidebar-link[data-tab]');
+        const adminSections = document.querySelectorAll('.dashboard-section');
+
+        function adminActivateTab(tabId) {
+            adminSections.forEach(s => s.classList.remove('active'));
+            adminLinks.forEach(l => l.classList.remove('active'));
+            const sec = document.getElementById(tabId);
+            if (sec) sec.classList.add('active');
+            const lnk = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+            if (lnk) lnk.classList.add('active');
+            if (tabId === 'users') loadAdminUsers();
+            if (tabId === 'reports') loadAdminReports();
+        }
+
+        adminLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                adminActivateTab(this.dataset.tab);
+            });
+        });
+
+        // "View Reports" alert button and any other data-tab-switch buttons
+        document.querySelectorAll('[data-tab-switch]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                adminActivateTab(this.dataset.tabSwitch);
+            });
+        });
+
+        // â”€â”€ Mobile Sidebar Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.sidebar-mobile-toggle');
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-active');
+            });
+
+            // Show toggle on mobile screen size
+            const checkMobile = () => {
+                if (window.innerWidth <= 992) {
+                    mobileToggle.style.display = 'flex';
+                } else {
+                    mobileToggle.style.display = 'none';
+                    sidebar.classList.remove('mobile-active');
+                }
+            };
+
+            window.addEventListener('resize', checkMobile);
+            checkMobile();
+        }
+
+        // â”€â”€ Load on page open â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        loadAdminUsers();
+        loadAdminReports();
+    </script>
+</body>
+
+</html>

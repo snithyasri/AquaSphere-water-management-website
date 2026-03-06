@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Aquasphere</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere
+            </a>
+            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                <i class="ph ph-list"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="login.html" class="btn btn-primary">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Selection Section -->
+    <section id="login-selection"
+        style="background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%); padding: 8rem 1.5rem; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden;">
+        <div class="container stagger-in is-visible"
+            style="display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2;">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <p style="color: blue; font-size: 1.25rem; max-width: 600px;">Choose your account
+                    type to proceed and continue your impact.</p>
+            </div>
+
+            <div class="auth-grid">
+                <!-- User Card -->
+                <div class="auth-card glass hover-float">
+                    <div class="auth-icon"
+                        style="background: var(--brand-gradient); color: white; box-shadow: var(--shadow-blue);">
+                        <i class="ph ph-user" style="font-size: 2.2rem;"></i>
+                    </div>
+                    <h2 class="auth-title">Citizen Login</h2>
+                    <p class="auth-desc" style="color: blue;">Report issues, track status, and view water quality data
+                        in your area.</p>
+                    <a href="auth-citizen.html" class="btn btn-primary" style="width: 100%; text-decoration: none;">
+                        Login as Citizen <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Volunteer Card -->
+                <div class="auth-card glass hover-float">
+                    <div class="auth-icon"
+                        style="background: linear-gradient(135deg, #16a34a, #22c55e); color: white; box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.3);">
+                        <i class="ph ph-hand-heart" style="font-size: 2.2rem;"></i>
+                    </div>
+                    <h2 class="auth-title">Volunteer Login</h2>
+                    <p class="auth-desc" style="color: blue;">Join field investigations, verify reports, and help clean
+                        up communities.</p>
+                    <a href="auth-volunteer.html" class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #059669, #10b981); width: 100%; text-decoration: none;">
+                        Login as Volunteer <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Admin Card -->
+                <div class="auth-card glass hover-float">
+                    <div class="auth-icon"
+                        style="background: linear-gradient(135deg, #dc2626, #ef4444); color: white; box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.3);">
+                        <i class="ph ph-shield-check" style="font-size: 2.2rem;"></i>
+                    </div>
+                    <h2 class="auth-title">Admin Login</h2>
+                    <p class="auth-desc" style="color: blue;">Manage reports, assign tasks, and oversee the entire
+                        platform workflow.</p>
+                    <a href="auth-admin.html" class="btn btn-primary"
+                        style="background: linear-gradient(135deg, #dc2626, #ef4444); width: 100%; text-decoration: none;">
+                        Login as Admin <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Aquasphere</h3>
+                <p style="color: blanchedalmond; max-width: 250px;">
+                    Bridging the gap between citizens and authorities for a safer, healthier water future.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="login.html" class="nav-link">Report Issue</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3 style="color: blanchedalmond;">Contact</h3>
+                <ul>
+                    <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                    <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 Aquasphere. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

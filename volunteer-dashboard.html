@@ -1,0 +1,979 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard - Aquasphere</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        /* === Volunteer Dashboard Scoped Styles === */
+
+        /* Stat Cards Grid */
+        .vol-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .vol-stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md, 12px);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vol-stat-card i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .vol-stat-card h3 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .vol-stat-card p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        /* Chart Grid */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md, 12px);
+            box-shadow: var(--shadow-sm);
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-dark);
+            flex-shrink: 0;
+        }
+
+        .chart-card canvas {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        @media (max-width: 1024px) {
+            .chart-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section Heading */
+        .vol-section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(14, 165, 233, 0.15);
+        }
+
+        /* Task Cards Grid */
+        .vol-tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vol-task-card {
+            background: var(--white);
+            border-radius: var(--radius-lg, 16px);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vol-task-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+
+        .vol-task-body {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .vol-task-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Complete Task Modal */
+        .vol-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .vol-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .vol-modal {
+            background: var(--white);
+            border-radius: var(--radius-lg, 16px);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .vol-modal-overlay.active .vol-modal {
+            transform: scale(1);
+        }
+
+        .vol-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .vol-modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .vol-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .vol-modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
+        }
+
+        .vol-modal-body .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .vol-modal-body label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .vol-modal-body input,
+        .vol-modal-body textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-sm, 8px);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .vol-modal-body input:focus,
+        .vol-modal-body textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .vol-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .vol-badge-urgent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .vol-badge-normal {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .vol-task-dist {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .vol-task-body h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .vol-task-body p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin: 0;
+            flex: 1;
+        }
+
+        /* Settings Card */
+        .vol-settings-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg, 16px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .vol-setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .vol-setting-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .vol-setting-label h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: var(--text-dark);
+        }
+
+        .vol-setting-label p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .vol-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .vol-toggle-dot {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            right: 3px;
+            top: 3px;
+        }
+
+        /* Dashboard section consistent spacing */
+        .dashboard-section {
+            padding-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="./assets/logo-combined.svg" alt="Aquasphere Logo">
+                Aquasphere
+            </a>
+            <button class="menu-toggle"><i class="ph ph-list"></i></button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="volunteer-dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="index.html" class="btn btn-outline">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active" data-tab="overview">
+                    <i class="ph ph-squares-four"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-link" data-tab="tasks">
+                    <i class="ph ph-list-checks"></i> Tasks
+                </a>
+                <a href="#" class="sidebar-link" data-tab="map">
+                    <i class="ph ph-map-trifold"></i> Map View
+                </a>
+                <a href="#" class="sidebar-link" data-tab="history">
+                    <i class="ph ph-clock-counter-clockwise"></i> History
+                </a>
+                <a href="#" class="sidebar-link" data-tab="settings">
+                    <i class="ph ph-gear"></i> Settings
+                </a>
+                <a href="login.html" class="sidebar-link" style="margin-top: auto; font-weight: 600;">
+                    <i class="ph ph-sign-out"></i> Sign Out
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Toggle -->
+            <button class="sidebar-mobile-toggle"
+                style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1001; width: 60px; height: 60px; border-radius: 50%; background: var(--brand-gradient); color: white; border: none; box-shadow: var(--shadow-lg); font-size: 1.5rem; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="ph ph-squares-four"></i>
+            </button>
+
+            <!-- Overview Section -->
+            <div id="overview" class="dashboard-section active">
+                <header class="dashboard-header vol-header"
+                    style="background: linear-gradient(135deg, #059669 0%, #047857 60%, #065f46 100%); border-radius: var(--radius-lg); padding: 2rem 2.5rem; margin-bottom: 2.5rem; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(5,150,105,0.25);">
+                    <div>
+                        <h1 id="welcome-message"
+                            style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: white;">
+                            Volunteer Panel</h1>
+                        <p style="font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.85);">Active status for
+                            <span id="display-user-name" style="font-weight: 700; color: white;">Volunteer User</span>
+                        </p>
+                        <p id="display-user-email" style="display: none;"></p>
+                    </div>
+                    <div>
+                        <button class="btn" data-tab-switch="map"
+                            style="background: white; color: #059669; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 99px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            <i class="ph ph-map-pin"></i> View Map
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Stat Cards -->
+                <section style="margin-bottom: 2.5rem;">
+                    <h2 class="vol-section-title">Your Weekly Impact</h2>
+                    <div class="vol-stats-grid stagger-in is-visible">
+                        <div class="vol-stat-card glass hover-float">
+                            <div class="profile-pic-container" id="profile-pic-trigger"
+                                style="background: linear-gradient(135deg, #0ea5e9, #2563eb); width: 50px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 0.5rem; box-shadow: var(--shadow-blue);">
+                                <i class="ph ph-user" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <input type="file" id="profile-upload" style="display: none;" accept="image/*">
+                            <h3 id="vol-stat-tasks" class="counter-value" data-target="24"
+                                style="color: var(--primary-color);">0</h3>
+                            <p style="font-weight: 600;">Tasks Done</p>
+                        </div>
+                        <div class="vol-stat-card glass hover-float">
+                            <div
+                                style="background: linear-gradient(135deg, #10b981, #059669); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 0.5rem; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);">
+                                <i class="ph ph-clock-counter-clockwise" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <h3 class="counter-value" data-target="156" data-suffix="h" style="color: #10b981;">0h
+                            </h3>
+                            <p style="font-weight: 600;">Time Invested</p>
+                        </div>
+                        <div class="vol-stat-card glass hover-float">
+                            <div
+                                style="background: linear-gradient(135deg, #f59e0b, #d97706); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 0.5rem; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3);">
+                                <i class="ph ph-users" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <h3 id="vol-stat-helped" class="counter-value" data-target="1250" style="color: #f59e0b;">0
+                            </h3>
+                            <p style="font-weight: 600;">People Helped</p>
+                        </div>
+                        <div class="vol-stat-card glass hover-float">
+                            <div
+                                style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 0.5rem; box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);">
+                                <i class="ph ph-lightning" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <h3 class="counter-value" data-target="850" style="color: #8b5cf6;">0</h3>
+                            <p style="font-weight: 600;">Skill Points</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts -->
+                <section style="margin-bottom: 2.5rem;">
+                    <h2 class="vol-section-title">Performance Charts</h2>
+                    <div class="chart-grid">
+                        <div class="chart-card">
+                            <h3>Task Completion Trend</h3>
+                            <canvas id="volunteerTasksChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Distance Covered (km)</h3>
+                            <canvas id="volunteerDistanceChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Equipment Readiness</h3>
+                            <canvas id="volunteerEquipmentChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Tasks Section -->
+            <div id="tasks" class="dashboard-section">
+                <h2 class="vol-section-title">Assigned Field Tasks</h2>
+                <div class="vol-tasks-grid" id="volTasksGrid">
+                    <div style="padding:2rem;text-align:center;color:var(--text-light);grid-column:1/-1;">
+                        Loading tasks...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map View Section -->
+            <div id="map" class="dashboard-section">
+                <h2 class="vol-section-title">Field Map</h2>
+                <div class="map-container" id="volunteerMap"></div>
+
+                <!-- Map Legend -->
+                <div class="map-legend"
+                    style="margin-top: 1rem; display: flex; gap: 2rem; background: var(--white); padding: 1rem; border-radius: 8px; box-shadow: var(--shadow-sm); flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div
+                            style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                        </div>
+                        <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Red: Critical
+                            Issue</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div
+                            style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                        </div>
+                        <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Yellow: Quality
+                            Warning</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div
+                            style="width: 12px; height: 12px; border-radius: 50%; background: #0ea5e9; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                        </div>
+                        <span style="font-size: 0.875rem; font-weight: 500; color: var(--text-dark);">Blue: Safe /
+                            Monitoring</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div id="history" class="dashboard-section">
+                <h2 class="vol-section-title">Volunteering History</h2>
+                <div class="vol-tasks-grid" id="volHistoryGrid">
+                    <div style="padding:2rem;text-align:center;color:var(--text-light);grid-column:1/-1;">
+                        Loading history...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings" class="dashboard-section">
+                <h2 class="vol-section-title">Volunteer Preferences</h2>
+                <div class="vol-settings-card">
+                    <div class="vol-setting-row">
+                        <div class="vol-setting-label">
+                            <h4>Active Availability</h4>
+                            <p>Show yourself as 'Online' for emergency tasks.</p>
+                        </div>
+                        <div class="setting-toggle" data-setting="active-availability"
+                            style="width: 44px; height: 24px; background: #10b981; border-radius: 12px; position: relative; cursor: pointer;">
+                            <div class="toggle-dot"
+                                style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; right: 3px; top: 3px; transition: all 0.3s;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vol-setting-row">
+                        <div class="vol-setting-label">
+                            <h4>Proximity Alerts</h4>
+                            <p>Notify me of tasks within 5km radius.</p>
+                        </div>
+                        <div class="setting-toggle" data-setting="proximity-alerts"
+                            style="width: 44px; height: 24px; background: var(--primary-color); border-radius: 12px; position: relative; cursor: pointer;">
+                            <div class="toggle-dot"
+                                style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; right: 3px; top: 3px; transition: all 0.3s;">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="save-settings-btn"
+                        style="margin-top: 1.5rem; width: 100%;">Update
+                        Availability</button>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <section style="padding: 2.5rem 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 2rem;">
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 2.5rem; align-items: center;">
+                    <a href="#" class="social-link" style="color: var(--secondary-color);"><i
+                            class="ph-fill ph-facebook-logo" style="font-size: 2.5rem;"></i></a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color);"><i
+                            class="ph-fill ph-twitter-logo" style="font-size: 2.5rem;"></i></a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color);"><i
+                            class="ph-fill ph-instagram-logo" style="font-size: 2.5rem;"></i></a>
+                    <a href="#" class="social-link" style="color: var(--secondary-color);"><i
+                            class="ph-fill ph-linkedin-logo" style="font-size: 2.5rem;"></i></a>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer" style="margin-top: auto;">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Aquasphere</h3>
+                        <p style="color: blanchedalmond; max-width: 250px;">
+                            Bridging the gap between citizens and authorities for a safer, healthier water future.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Quick Links</h3>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="login.html" class="nav-link">Report Issue</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3 style="color: blanchedalmond;">Contact</h3>
+                        <ul>
+                            <li><i class="ph ph-envelope"></i> support@Aquasphere.org</li>
+                            <li><i class="ph ph-phone"></i> +1 (555) 123-4567</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    &copy; 2026 Aquasphere. All rights reserved.
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Complete Task Modal -->
+    <div class="vol-modal-overlay" id="completeTaskModal">
+        <div class="vol-modal">
+            <div class="vol-modal-header">
+                <h3 id="completeTaskTitle">Complete Task</h3>
+                <button class="vol-modal-close" onclick="closeCompleteTaskModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="vol-modal-body">
+                <div class="form-group">
+                    <label for="completionNotes">Completion Notes (Required)</label>
+                    <textarea id="completionNotes" rows="3" placeholder="Describe the resolution..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="completionBudget">Budget Used (Optional)</label>
+                    <input type="text" id="completionBudget" placeholder="e.g. ₹500 for parts">
+                </div>
+                <!-- Future scope for images -->
+                <!--
+                <div class="form-group">
+                    <label for="completionImage">Upload Photo</label>
+                    <input type="file" id="completionImage" accept="image/*">
+                </div>
+                -->
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="submitCompleteTaskBtn">Submit
+                    Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dashboard-charts.js"></script>
+    <script>
+        // ================================================
+        // 1. SIDEBAR TAB SWITCHING (no popups)
+        // ================================================
+        const volLinks = document.querySelectorAll('.sidebar-link[data-tab]');
+        const volSections = document.querySelectorAll('.dashboard-section');
+
+        function volActivateTab(tabId) {
+            volSections.forEach(s => s.classList.remove('active'));
+            volLinks.forEach(l => l.classList.remove('active'));
+            const sec = document.getElementById(tabId);
+            if (sec) sec.classList.add('active');
+            const lnk = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+            if (lnk) lnk.classList.add('active');
+            if (tabId === 'map' && !window._volMapInited) initVolMap();
+        }
+
+        volLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                volActivateTab(this.dataset.tab);
+            });
+        });
+
+        // "View Map" header button
+        document.querySelectorAll('[data-tab-switch]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                volActivateTab(this.dataset.tabSwitch);
+            });
+        });
+
+        // ================================================
+        // 2. POPULATE VOLUNTEER NAME FROM localStorage
+        // ================================================
+        (function loadVolProfile() {
+            const uid = localStorage.getItem('currentUserId');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            let user = uid ? users.find(u => u.id === uid || u._id === uid) : null;
+            if (!user) user = users.find(u => u.role === 'volunteer');
+            if (user) {
+                const name = user.name || user.fullName || 'Volunteer';
+                const el = document.getElementById('display-user-name');
+                if (el) el.textContent = name;
+            }
+        })();
+
+        // ================================================
+        // 3. DYNAMIC FIELD TASKS & MAP
+        // ================================================
+        let _volMap = null;
+
+        function initVolMap() {
+            window._volMapInited = true;
+            _volMap = L.map('volunteerMap').setView([10.7905, 78.7], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(_volMap);
+            updateVolTasksAndMap();
+        }
+
+        async function updateVolTasksAndMap() {
+            const grid = document.getElementById('volTasksGrid');
+            const token = localStorage.getItem('token');
+            const volunteerId = localStorage.getItem('currentUserId');
+
+            try {
+                const res = await fetch('/api/reports/assigned', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const tasks = await res.json();
+
+                const activeTasks = tasks.filter(t => t.status !== 'resolved');
+                const historyTasks = tasks.filter(t => t.status === 'resolved');
+
+                // Update the completed tasks count directly
+                const tasksCountEl = document.getElementById('vol-stat-tasks');
+                if (tasksCountEl) {
+                    tasksCountEl.innerText = historyTasks.length;
+                    tasksCountEl.removeAttribute('data-target');
+                }
+
+                // Render Active Tasks (Tasks Tab)
+                if (!activeTasks.length) {
+                    grid.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-light);grid-column:1/-1;">No active tasks...</div>';
+                } else {
+                    grid.innerHTML = activeTasks.map(r => {
+                        const isUrgent = (r.issue || '').toLowerCase().includes('leak') || (r.issue || '').toLowerCase().includes('critical') || (r.issue || '').toLowerCase().includes('burst');
+                        const badgeClass = isUrgent ? 'vol-badge-urgent' : 'vol-badge-normal';
+                        const badgeText = isUrgent ? 'URGENT' : 'NORMAL';
+                        const color = isUrgent ? '#dc2626' : '#f59e0b';
+                        const img = isUrgent ? './assets/cleanup-action.jpg' : './assets/water-sampling.jpg';
+                        const id = r._id || r.id;
+                        let btnHTML = '';
+                        if (r.status === 'pending') {
+                            btnHTML = `
+                                <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="volAcceptTask('${id}', this)">Accept Task</button>
+                                <button class="btn btn-outline" style="width: 100%; border-color:#dc2626; color:#dc2626;" onclick="volDeclineTask('${id}', this)">Decline Task</button>
+                            `;
+                        } else if (r.status === 'investigating') {
+                            btnHTML = `
+                                <button class="btn btn-primary" style="width: 100%; background-color:#10b981; border-color:#10b981;" onclick="openCompleteTaskModal('${id}', '${r.issue}')">Complete Task</button>
+                            `;
+                        }
+
+                        return `
+                        <div class="vol-task-card" style="border-top: 4px solid ${color};">
+                            <img src="${img}" alt="${r.issue}">
+                            <div class="vol-task-body">
+                                <div class="vol-task-meta">
+                                    <span class="vol-badge ${badgeClass}">${badgeText}</span>
+                                    <span class="vol-task-dist">${(Math.random() * 5 + 1).toFixed(1)} km away</span>
+                                </div>
+                                <h3>${r.issue}</h3>
+                                <p><strong>Location:</strong> ${r.location}<br><strong>Ref:</strong> #${String(id).toUpperCase()}</p>
+                                ${btnHTML}
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+
+                // Render History Tasks (History Tab)
+                const historyGrid = document.getElementById('volHistoryGrid');
+                if (historyGrid) {
+                    if (!historyTasks.length) {
+                        historyGrid.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-light);grid-column:1/-1;">No completed tasks yet...</div>';
+                    } else {
+                        historyGrid.innerHTML = historyTasks.map(r => {
+                            const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Unknown';
+                            const id = r._id || r.id;
+
+                            return `
+                            <div class="vol-task-card" style="border-top: 4px solid #10b981;">
+                                <div class="vol-task-body">
+                                    <div class="vol-task-meta" style="margin-bottom: 0.5rem;">
+                                        <span class="vol-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">✔ Resolved</span>
+                                        <span class="vol-task-dist">${date}</span>
+                                    </div>
+                                    <h3>${r.issue}</h3>
+                                    <p style="font-size: 0.875rem;"><strong>Location:</strong> ${r.location}<br><strong>Ref:</strong> #${String(id).toUpperCase()}</p>
+                                    
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: #f8fafc; border-left: 3px solid #10b981; border-radius: 4px;">
+                                        <strong style="font-size:0.75rem; color:#64748b; text-transform:uppercase;">Completion Report</strong>
+                                        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #334155;">
+                                            ${r.completionNotes || 'No notes provided.'}
+                                        </p>
+                                        ${r.completionBudget && r.completionBudget !== '₹0' ? `<p style="margin: 0.25rem 0 0 0; font-size: 0.75rem; font-weight: 600; color: #0f172a;">Budget: <span style="font-weight: 400;">${r.completionBudget}</span></p>` : ''}
+                                    </div>
+                                </div>
+                            </div>`;
+                        }).join('');
+                    }
+                }
+
+                // Update Map Markers
+                if (_volMap) {
+                    tasks.forEach(task => {
+                        // Assuming location text is mapped to some coordinate (or just default/randomized for demo)
+                        const lat = 10.7905 + (Math.random() - 0.5) * 0.1;
+                        const lng = 78.7 + (Math.random() - 0.5) * 0.1;
+                        const markerColor = (task.issue || '').toLowerCase().includes('leak') ? '#ef4444' : '#f59e0b';
+                        const icon = L.divIcon({
+                            className: '',
+                            html: `<div style="width:16px;height:16px;border-radius:50%;background:${markerColor};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>`,
+                            iconSize: [16, 16], iconAnchor: [8, 8]
+                        });
+                        L.marker([lat, lng], { icon }).addTo(_volMap).bindPopup(task.issue || 'Task');
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = '<div style="padding:2rem;text-align:center;color:#ef4444;grid-column:1/-1;">Error loading tasks</div>';
+            }
+        }
+
+        // Initial load
+        updateVolTasksAndMap();
+
+        async function volDeclineTask(id, btn) {
+            btn.textContent = 'Declining...';
+            btn.disabled = true;
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`/api/reports/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'declined' })
+                });
+
+                // Refresh task list internally 
+                updateVolTasksAndMap();
+            } catch (e) {
+                console.error(e);
+                btn.textContent = 'Decline Failed';
+                btn.disabled = false;
+            }
+        }
+
+        // Accept changes status to investigating (In Progress)
+        async function volAcceptTask(id, btn) {
+            btn.textContent = 'Accepting...';
+            btn.disabled = true;
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`/api/reports/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'investigating' })
+                });
+                updateVolTasksAndMap();
+            } catch (error) {
+                console.error('Failed to update task status:', error);
+                alert('Task accept failed.');
+                btn.disabled = false;
+                btn.textContent = 'Accept Task';
+            }
+        }
+
+        // ================================================
+        // Modal Logic
+        // ================================================
+        let currentCompletingTaskId = null;
+
+        function openCompleteTaskModal(id, issueName) {
+            currentCompletingTaskId = id;
+            document.getElementById('completeTaskTitle').textContent = `Complete: ${issueName}`;
+            document.getElementById('completionNotes').value = '';
+            document.getElementById('completionBudget').value = '';
+            document.getElementById('completeTaskModal').classList.add('active');
+        }
+
+        function closeCompleteTaskModal() {
+            currentCompletingTaskId = null;
+            document.getElementById('completeTaskModal').classList.remove('active');
+        }
+
+        document.getElementById('submitCompleteTaskBtn').addEventListener('click', async function () {
+            const notes = document.getElementById('completionNotes').value.trim();
+            const budget = document.getElementById('completionBudget').value.trim();
+
+            if (!notes) {
+                alert('Please provide completion notes.');
+                return;
+            }
+
+            this.textContent = 'Submitting...';
+            this.disabled = true;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/reports/${currentCompletingTaskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        status: 'resolved',
+                        completionNotes: notes,
+                        completionBudget: budget || '₹0'
+                    })
+                });
+
+                if (!res.ok) throw new Error('Failed to resolve task');
+
+                closeCompleteTaskModal();
+                updateVolTasksAndMap();
+            } catch (error) {
+                console.error(error);
+                alert('Failed to submit completion report');
+            } finally {
+                this.textContent = 'Submit Report';
+                this.disabled = false;
+            }
+        });
+
+        // ── Mobile Sidebar Toggle ──────────────────────────────────────
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.sidebar-mobile-toggle');
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-active');
+            });
+
+            // Show toggle on mobile screen size
+            const checkMobile = () => {
+                if (window.innerWidth <= 992) {
+                    mobileToggle.style.display = 'flex';
+                } else {
+                    mobileToggle.style.display = 'none';
+                    sidebar.classList.remove('mobile-active');
+                }
+            };
+
+            window.addEventListener('resize', checkMobile);
+            checkMobile();
+        }
+
+        // ================================================
+        // 4. INITIALIZATION
+        // ================================================
+        (function initDashboard() {
+            // Tab switching handled by volActivateTab logic above
+            // Just need to ensure initial data load
+            updateVolTasksAndMap();
+            // Optional: check profile load from previous script
+        })();
+
+        // ================================================
+        // 5. SETTINGS TOGGLES
+        // ================================================
+        document.querySelectorAll('.setting-toggle').forEach(toggle => {
+            let on = toggle.style.background !== 'rgb(203, 213, 225)';
+            toggle.addEventListener('click', function () {
+                on = !on;
+                const dot = this.querySelector('.toggle-dot');
+                this.style.background = on ? 'var(--primary-color)' : '#cbd5e1';
+                if (dot) { dot.style.right = on ? '3px' : 'auto'; dot.style.left = on ? 'auto' : '3px'; }
+            });
+        });
+
+        // Save settings — show toast instead of alert
+        const saveBtn = document.getElementById('save-settings-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function () {
+                this.textContent = '✔ Saved!';
+                this.style.background = '#10b981';
+                setTimeout(() => {
+                    this.textContent = 'Update Availability';
+                    this.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
