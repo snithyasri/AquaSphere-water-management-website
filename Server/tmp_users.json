@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "name": "subi",
+    "email": "msubisha2005@gmail.com",
+    "password": "$2a$10$rcQ6.S3MB8UfCF3bDE/QGuB9wm7qYAV3EeLftcisubFwE5CXCp.V.",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 04:58:30"
+  },
+  {
+    "id": 2,
+    "name": "nithi",
+    "email": "nithi@gmail.com",
+    "password": "$2a$10$xEy.n20RRqBHPpIQLpsBZ.yLNyx8lICqmutFsKLV69s/zU5eeO7d.",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 05:00:57"
+  },
+  {
+    "id": 3,
+    "name": "subi",
+    "email": "subi@gmail.com",
+    "password": "$2a$10$BKEPbqxMlkbZN3ZsN/Gg/uZTTgRcYPnont7C121cLeEXAvxgGFBzO",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 05:09:22"
+  },
+  {
+    "id": 4,
+    "name": "swa",
+    "email": "swa@gmail.com",
+    "password": "$2a$10$jBd6Vu0NzZACf.909WXLRebA9U2/wjtUa1LdFYiDja89QdXJnl8mi",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 05:34:38"
+  },
+  {
+    "id": 5,
+    "name": "santhiya",
+    "email": "sandy@gmail.com",
+    "password": "$2a$10$FvI8YOXjC4p4gaKuObs9LOoJQJjMQ8FzsbH9kNsw.7mxS3YNsiJTC",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 16:18:04"
+  },
+  {
+    "id": 6,
+    "name": "shini",
+    "email": "shini@gmail.com",
+    "password": "$2a$10$U5l27QzsLcDHrNreIxqR/.KuLv.tnngGZLKdMG/udPZ8ZIemxUvTq",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 16:40:45"
+  },
+  {
+    "id": 7,
+    "name": "System Admin",
+    "email": "admin@aquasphere.com",
+    "password": "$2a$10$ld6a5G52hjh2ANdv4ZhcluC1ImSYziK7Kfb9xnjyp2dftzBLDuDaa",
+    "role": "admin",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 17:01:32"
+  },
+  {
+    "id": 8,
+    "name": "sharmi",
+    "email": "sharmi@gmail.com",
+    "password": "$2a$10$4c6SfhkykQgk.fN8sKtBQ.NMsklL/7TSQov.FLEdlEJQLK3/Gbppe",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 17:26:44"
+  },
+  {
+    "id": 9,
+    "name": "sharmila",
+    "email": "sharmila@gail.com",
+    "password": "$2a$10$pumjTMtf02Y7dpDT2U7Bc.A8k7PEZHF.BoBGv9YajnKHdEea16Moq",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 17:35:32"
+  },
+  {
+    "id": 10,
+    "name": "philo",
+    "email": "philo@gmail.com",
+    "password": "$2a$10$3bpjOsIm2CxmhmXs86rOQ.Yhube5n4T/IqusTYrSfNMIDsXpKqEY6",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-26 17:42:43"
+  },
+  {
+    "id": 11,
+    "name": "kani",
+    "email": "kani@gmail.com",
+    "password": "$2a$10$oZL7Wb5Nih957qiDwVDVpu2C/ru4OCkFNAT37X04MRx32nHfl6JQ2",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-02-28 17:19:33"
+  },
+  {
+    "id": 12,
+    "name": "tamil",
+    "email": "tamil@gmail.com",
+    "password": "$2a$10$U18OoJwvoGzNhoMbqbtsT.05jzib5CiNHE3/n2a.4jUdWK6kYbjUe",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 00:42:53"
+  },
+  {
+    "id": 13,
+    "name": "Test Citizen",
+    "email": "testcit1@test.com",
+    "password": "$2a$10$6EOlHOgyfXm/m4A0KeqzyuHtTxHJaPRngLyClgtOraKQIJM8aNtDW",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 15:50:56"
+  },
+  {
+    "id": 14,
+    "name": "Test Volunteer",
+    "email": "testvol1@test.com",
+    "password": "$2a$10$L6.DFwe1hXKdZMOcI2gWZOr6kpossyv0ELjY1FSma6VJzHZPDpKI2",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 15:55:18"
+  },
+  {
+    "id": 15,
+    "name": "nithu",
+    "email": "nithu@gmail.com",
+    "password": "$2a$10$UtfMxnqiAA/tTzjlbDg1FuvVuZ.iBxgdZDrBn81iwn0WVXN3Y5UvG",
+    "role": "citizen",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 16:08:07"
+  },
+  {
+    "id": 16,
+    "name": "vole",
+    "email": "vole@gmail.com",
+    "password": "$2a$10$HEe0mmRyKHfpvAC9XJ7azuX4iAlRhB44XRgxM8BiY10nfA8xWREXq",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 16:11:19"
+  },
+  {
+    "id": 17,
+    "name": "gree",
+    "email": "gree@gmail.com",
+    "password": "$2a$10$YrsILSFm7cpMLjvYDqZyuelckf6bx.lNnFRJfnQ7Pzu9r7ylqF.nK",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 16:13:45"
+  },
+  {
+    "id": 18,
+    "name": "pla",
+    "email": "pla@gmail.com",
+    "password": "$2a$10$4RHpc95wUP9tZzD405qbOuHOd7o8aZoBRB3BKWs8UAVBB.R8Or.qC",
+    "role": "volunteer",
+    "location": null,
+    "skills": null,
+    "createdAt": "2026-03-02 16:22:01"
+  }
+]

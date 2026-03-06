@@ -1,0 +1,3 @@
+✅ Connected to SQLite database.
+📦 Database tables initialized.
+📦 Database tables initialized.
