@@ -1,0 +1,18 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Outer Circular Hands -->
+    <path d="M50 10C35 10 22 18 15 30C12 35 10 42 10 50C10 72 28 90 50 90C72 90 90 72 90 50C90 42 88 35 85 30M15 30C18 35 25 40 35 40C45 40 50 35 50 35M85 30C82 35 75 40 65 40C55 40 50 35 50 35" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Stylized Hands Cupping -->
+    <path d="M20 65C25 75 35 82 50 82C65 82 75 75 80 65" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Central Water Drop -->
+    <path d="M50 25C50 25 35 45 35 52C35 60 41.7157 67 50 67C58.2843 67 65 60 65 52C65 45 50 25 50 25Z" fill="url(#drop-gradient)"/>
+    
+    <!-- Definitions for Gradients -->
+    <defs>
+        <linearGradient id="drop-gradient" x1="50" y1="25" x2="50" y2="67" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#38bdf8"/>
+            <stop offset="1" stop-color="#0284c7"/>
+        </linearGradient>
+    </defs>
+</svg>
